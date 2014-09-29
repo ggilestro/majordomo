@@ -1,5 +1,5 @@
 #!/bin/bash
 
-$URL = $1
+URL="$1"
 echo ${URL}
 wget -q -O - `youtube-dl ${URL}`| ffmpeg -i - -f mp3 -vn -acodec libmp3lame -| mpg123  -

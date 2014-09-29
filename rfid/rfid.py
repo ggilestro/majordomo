@@ -45,7 +45,7 @@ class RFIDdevice():
         """
         """
         self.actions = {
-            '0a5ce5bd' : '/opt/majordomo/bin/play-youtube E9XQ2MdNgKY'
+            '0a5ce5bd' : 'mpsyt playurl E9XQ2MdNgKY'
                 }
                     
     
