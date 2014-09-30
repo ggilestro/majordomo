@@ -27,19 +27,47 @@ import evdev
 import threading
 import os
 
+import commands
+import json
+  
 class RFIDdevice():
-    def __init__(self, device, useUDEV=True):
+    def __init__(self, device, queue, useEVDEV=True):
         """
+        Initialize the class
+        device:     a unix path to the input device
+        queue:      the queue to which commands should be sent
+        useEVDEV    use evdev to interact with the device
         """
-        self.useUDEV = useUDEV
         
-        if self.useUDEV:
+        self.queue = queue
+        self.useEVDEV = useEVDEV
+        
+        if device.upper() == "AUTO":
+            device = self.__find_device()
+        
+        if self.useEVDEV:
             self.dev = evdev.InputDevice(device)
         else:
             self.dev = open(device, 'r')
             
         self.getActions()
         self.startListening()
+
+    def __find_device(self, string="RFID"):
+        """
+        Internal routine used to automatically find the path to the input device
+        """
+        cmd = "ls /dev/input/by-id/ -la | grep %s" % string
+        _, t = commands.getstatusoutput(cmd)
+        try:
+            _, d = os.path.split( t.split("->")[1] )
+            dev = os.path.join ("/dev/input", d)
+        except:
+            print "Could not automatically find a device containing the string %s " % string
+            exit()
+            
+        return dev
+
         
     def getActions(self):
         """
@@ -47,7 +75,12 @@ class RFIDdevice():
         self.actions = {
             '0a5ce5bd' : 'mpsyt playurl E9XQ2MdNgKY'
                 }
-                    
+                
+    def saveActions(self):
+        """
+        """
+        with open('rfid_actions.json', 'w') as outfile:
+            json.dump(self.actions, outfile)
     
     def listeningLoop(self):
         """
@@ -65,7 +98,7 @@ class RFIDdevice():
             50: u'm', 51: u',', 52: u'.', 53: u'/', 54: u'RSHFT', 56: u'LALT', 100: u'RALT'
         }        
                 
-        if self.useUDEV:
+        if self.useEVDEV:
 
             for event in self.dev.read_loop():
                 if event.type == evdev.ecodes.EV_KEY:
@@ -91,8 +124,8 @@ class RFIDdevice():
     def transmit(self,rfid_code):
         """
         """
-        print "Received: %s\n" % rfid_code 
-        self.execute(rfid_code)
+        cmd = ("rfid", rfid_code)
+        self.queue.Put(cmd)
         
     def startListening(self):
         """
@@ -117,8 +150,8 @@ class RFIDdevice():
         """
         if rfid in self.actions:
             os.system(self.actions[rfid])
-        
 
-        
-r = RFIDdevice('/dev/input/event15')
+if __name__ == '__main__':
+
+    r = RFIDdevice(dev)
 
