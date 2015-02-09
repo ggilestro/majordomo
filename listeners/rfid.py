@@ -22,16 +22,20 @@
 #  
 #  
 
-#!/bin/env python2
+#!/bin/env python
+#This works with USB device 08ff:0009 AuthenTec, Inc. 
+#usb-深圳市思远创智能设备有限公司_http:__www.sycreade_USB_RFID_Reader_REV_0008-event-kbd -> ../event12
+
+
 import evdev
 import threading
 import os
 
-import commands
-import json
+import shlex, subprocess
+
   
 class RFIDdevice():
-    def __init__(self, device, queue, useEVDEV=True):
+    def __init__(self, device, queue, actions, useEVDEV=True):
         """
         Initialize the class
         device:     a unix path to the input device
@@ -41,46 +45,38 @@ class RFIDdevice():
         
         self.queue = queue
         self.useEVDEV = useEVDEV
+        actions["rfid"] = {}
         
         if device.upper() == "AUTO":
             device = self.__find_device()
         
-        if self.useEVDEV:
-            self.dev = evdev.InputDevice(device)
-        else:
-            self.dev = open(device, 'r')
-            
-        self.getActions()
-        self.startListening()
+        if device:
+        
+            if self.useEVDEV:
+                self.dev = evdev.InputDevice(device)
+            else:
+                self.dev = open(device, 'r')
+                
+            self.startListening()
 
     def __find_device(self, string="RFID"):
         """
         Internal routine used to automatically find the path to the input device
         """
-        cmd = "ls /dev/input/by-id/ -la | grep %s" % string
-        _, t = commands.getstatusoutput(cmd)
+        
+        p1 = subprocess.Popen(["ls", "/dev/input/by-id/", "-la"], stdout=subprocess.PIPE)
+        p2 = subprocess.Popen(["grep", string], stdin=p1.stdout, stdout=subprocess.PIPE)
+        t = p2.communicate()[0]
+        t = t.decode('utf-8').strip()
         try:
             _, d = os.path.split( t.split("->")[1] )
             dev = os.path.join ("/dev/input", d)
         except:
-            print "Could not automatically find a device containing the string %s " % string
-            exit()
+            print ("Could not automatically find a device containing the string %s " % string)
+            dev = None
             
         return dev
 
-        
-    def getActions(self):
-        """
-        """
-        self.actions = {
-            '0a5ce5bd' : 'mpsyt playurl E9XQ2MdNgKY'
-                }
-                
-    def saveActions(self):
-        """
-        """
-        with open('rfid_actions.json', 'w') as outfile:
-            json.dump(self.actions, outfile)
     
     def listeningLoop(self):
         """
@@ -125,7 +121,7 @@ class RFIDdevice():
         """
         """
         cmd = ("rfid", rfid_code)
-        self.queue.Put(cmd)
+        self.queue.put(cmd)
         
     def startListening(self):
         """
@@ -140,18 +136,3 @@ class RFIDdevice():
         """
         self.isListening = False
         
-    def learn(self, rfid, action):
-        """
-        """
-        self.actions[rfid] = action
-        
-    def execute(self, rfid):
-        """
-        """
-        if rfid in self.actions:
-            os.system(self.actions[rfid])
-
-if __name__ == '__main__':
-
-    r = RFIDdevice(dev)
-
