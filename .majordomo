@@ -1,0 +1,11 @@
+[rfid]
+4f1eb730 = mpc clear; mpc ls "iTunes Music/The Cardigans/First Band On The Moon" | mpc add | mpc play
+0a5ce5bd = mpsyt playurl E9XQ2MdNgKY
+
+[pipe]
+
+
+[mouse]
+WHEEL_1 = amixer set PCM 2dB+
+WHEEL_-1 = amixer set PCM 2dB-
+
