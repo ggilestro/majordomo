@@ -28,6 +28,7 @@
 import evdev
 import threading
 import os
+import logging
 
 import subprocess
 import datetime
@@ -53,7 +54,7 @@ class mouseDevice():
                 
             self.startListening()
 
-    def __find_device(self, string="mouse0"):
+    def __find_device(self, string="event-mouse"):
         """
         Internal routine used to automatically find the path to the input device
         """
@@ -65,8 +66,9 @@ class mouseDevice():
         try:
             _, d = os.path.split( t.split("->")[1] )
             dev = os.path.join ("/dev/input", d)
+            logging.debug("Found mouse at %s" % dev)
         except:
-            print ("Could not automatically find a device containing the string %s " % string)
+            logging.debug("Could not automatically find a device containing the string %s " % string)
             dev = None
             
         return dev

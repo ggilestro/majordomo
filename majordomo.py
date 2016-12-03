@@ -30,16 +30,17 @@
 import queue
 import threading
 import json
+import logging
+import optparse
 
 import shlex, subprocess
 from listeners import rfid, pipe, mouse
 
 
 class majordomo():
-    def __init__(self, use_rfid=True, use_pipe=True, use_mouse=True, verbose=False):
+    def __init__(self, use_rfid=True, use_mouse=True, use_pipe=True ):
         """
         """
-        self.verbose = verbose
         self.queue = queue.Queue()
         
         self.actions = {}
@@ -66,16 +67,14 @@ class majordomo():
         """
         while self.isListening:
             ct, cmd = self.queue.get()
-            if self.verbose:
-                print (ct, ":", cmd)
-                
+            logging.debug("%s: %s" % (ct, cmd))
             self.execute(ct, cmd)
 
     def loadActions(self):
         """
         """
         #try:
-        with open('/opt/majordomo/majordomo.json', 'r') as configfile:
+        with open('majordomo.json', 'r') as configfile:
             self.actions = json.load( configfile )
         #except:
             #self.actions["mouse"] = { 'WHEEL_1' : 'mpc volume +2' , 'WHEEL_-1' : 'mpc volume -2', 'BTN_A_0' : 'mpc prev', 'BTN_B_0' : 'mpc next', 'BTN_A_99' : 'mpc pause', 'BTN_B_99' : 'bin/mpc_load_radio.sh', 'BTN_A_2' : 'bin/say_time.sh'}
@@ -88,6 +87,7 @@ class majordomo():
         """
         with open('majordomo.json', 'w') as configfile:
             json.dump(self.actions, configfile, indent=4)
+            logging.debug("Saved options to file")
 
     def learn(self, ct, cmd, action):
         """
@@ -105,14 +105,28 @@ class majordomo():
                 
                 args = shlex.split(self.actions[ct][cmd])
                 p = subprocess.Popen(args)
-
-                if self.verbose:
-                    print (self.actions[ct][cmd])
-                    print (p.communicate())
+                logging.debug(self.actions[ct][cmd])
+                logging.debug(p.communicate())
         
     def quit(self):
         """
         """
         self.isListening = False
         
-m = majordomo(verbose=True)
+if __name__ == '__main__':        
+    parser = optparse.OptionParser()
+ 
+    parser.add_option("-M", "--mouse", dest="mouse", default=False, help="Use mouse as listener", action="store_true")
+    parser.add_option("-R", "--RFID", dest="RFID", default=False, help="Use RFID as listener", action="store_true")
+    parser.add_option("-D", "--debug", dest="debug", default=False, help="Shows all logging messages", action="store_true")
+ 
+ 
+    (options, args) = parser.parse_args()
+    option_dict = vars(options)
+    
+    if option_dict["debug"]:
+        logging.getLogger().setLevel(logging.DEBUG)
+        logging.debug("Logger in DEBUG mode")
+        
+    
+    m = majordomo(option_dict["RFID"], option_dict["mouse"])

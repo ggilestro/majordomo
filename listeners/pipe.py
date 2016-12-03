@@ -25,6 +25,7 @@
 #  e.g.:  echo "TEST COMMAND" > /tmp/pipefile
 
 import os, tempfile
+import logging
 import threading
 
 class pipe():
@@ -55,13 +56,17 @@ class pipe():
         """
         try:
             os.mkfifo(self.pipefile)
+            logging.debug("Listening to FIFO Pipe at %s" % self.pipefile)
+            return True
         except:
-            pass
+            logging.debug("Error creating FIFO Pipe %s. File already existing?" % self.pipefile)
+            return False
 
     def listen_from_pipe(self):
         """
         """
         while self.isListening:
+            logging.debug("Listening from PIPE %s" % self.pipefile)
             with open(self.pipefile) as fifo:
                 self.transmit(fifo.read().strip())
         

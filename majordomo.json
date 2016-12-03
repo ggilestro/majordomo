@@ -67,9 +67,9 @@
         "4efbabf0": "bin/play_cd.sh \"2006 new year concert\"",
         "4ee300f0": "bin/play_cd.sh \"eric clapton unplugged\"",
         "9a40e600": "bin/play_cd.sh \"abba gold\"",
-	"f096004f": "bin/play_cd.sh \"on and on\"",
-	"80af134e": "bin/play_cd.sh \"big dad voodoo daddy\"",
-	"00011f4f": "bin/play_cd.sh \"oro incenso e birra\"",
+        "f096004f": "bin/play_cd.sh \"on and on\"",
+        "80af134e": "bin/play_cd.sh \"big dad voodoo daddy\"",
+        "00011f4f": "bin/play_cd.sh \"oro incenso e birra\"",
 
         "4ef90730": "bin/play_cd.sh \"Silent Night\"",
         "4ef888c0": "bin/play_cd.sh \"night and day\"",

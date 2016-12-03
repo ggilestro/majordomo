@@ -30,6 +30,7 @@
 import evdev
 import threading
 import os
+import logging
 
 import shlex, subprocess
 
@@ -71,8 +72,9 @@ class RFIDdevice():
         try:
             _, d = os.path.split( t.split("->")[1] )
             dev = os.path.join ("/dev/input", d)
+            logging.debug("Found RFID device at %s" % dev)
         except:
-            print ("Could not automatically find a device containing the string %s " % string)
+            logging.debug("Could not automatically find a device containing the string %s " % string)
             dev = None
             
         return dev
