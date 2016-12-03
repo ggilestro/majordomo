@@ -1,0 +1,9 @@
+#!/usr/bin/env xdg-open
+
+[Desktop Entry]
+Name=Majordomo Radio Service
+Comment=Listen for events and controls sound
+GenericName=Majordomo
+Terminal=true
+Type=Application
+Exec=lxterminal --command "/opt/majordomo/majordomo.sh"

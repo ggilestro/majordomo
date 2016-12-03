@@ -1,0 +1,19 @@
+#EXTM3U
+#EXTINF:-1, RAI - Radio RAI 1
+http://icestreaming.rai.it/1.mp3
+#EXTINF:-1, RAI - Radio RAI 2
+http://icestreaming.rai.it/2.mp3
+#EXTINF:-1, RAI - Radio RAI 3
+http://icestreaming.rai.it/3.mp3
+#EXTINF:-1, RAI - Radio RAI FD4 Leggera
+http://icestreaming.rai.it/4.mp3
+#EXTINF:-1, RAI - Radio RAI FD5 Auditorium
+http://icestreaming.rai.it/5.mp3
+#EXTINF:-1, Radio24
+http://shoutcast.radio24.it:8000/
+#EXTINF:-1, RadioCapital
+http://mp3.kataweb.it:8000/CAPITAL
+#EXTINF:-1, RadioDeeJay
+http://mp3.kataweb.it:8000/RadioDeejay
+#EXTINF:-1, RTL 102.5
+http://shoutcast.rtl.it:3010/stream/1/

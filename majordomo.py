@@ -24,6 +24,9 @@
 
 #TODO
 # http://www.hackerposse.com/~rozzin/journal/whole-home-pulseaudio.html
+# http://pythonhosted.org/python-mpd2/topics/commands.html
+
+
 import queue
 import threading
 import json
@@ -45,7 +48,7 @@ class majordomo():
             rfid.RFIDdevice(device="AUTO", queue=self.queue, actions=self.actions)
             
         if use_mouse:
-            mouse.mouseDevice(device="/dev/input/event3", queue=self.queue, actions=self.actions)
+            mouse.mouseDevice(device="AUTO", queue=self.queue, actions=self.actions)
             
         if use_pipe:
             pipe.pipe("/tmp/pipefile", queue=self.queue, actions=self.actions)
