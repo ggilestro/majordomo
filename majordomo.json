@@ -2,7 +2,6 @@
     "rfid": {
         "4efbaba0": "bin/play_cd.sh \"Il Bandito e il Campione\"",
         "41150488": "bin/play_cd.sh \"Oyster Card\"",
-        "4efbaba0": "bin/play_cd.sh \"Il Bandito e il Campione\"",
         "9a38d990": "bin/play_cd.sh \"L'allieva\"",
         "4f1f17b0": "bin/play_cd.sh \"Blue's\"",
         "9a480040": "bin/play_cd.sh \"Spirito DiVino\"",
@@ -61,16 +60,12 @@
         "4ee37430": "bin/play_cd.sh \"everybody else is doing it, so why can't we\"",
         "4f2409c0": "bin/play_cd.sh \"hang time\"",
         "4e1551e0": "bin/play_cd.sh \"jesus christ superstar\"",
-
-        "4ef88840": "bin/mpc_load_radio.sh Italians",
-
         "4efbabf0": "bin/play_cd.sh \"2006 new year concert\"",
         "4ee300f0": "bin/play_cd.sh \"eric clapton unplugged\"",
         "9a40e600": "bin/play_cd.sh \"abba gold\"",
         "f096004f": "bin/play_cd.sh \"on and on\"",
         "80af134e": "bin/play_cd.sh \"big dad voodoo daddy\"",
         "00011f4f": "bin/play_cd.sh \"oro incenso e birra\"",
-
         "4ef90730": "bin/play_cd.sh \"Silent Night\"",
         "4ef888c0": "bin/play_cd.sh \"night and day\"",
         "4ef8d750": "bin/play_cd.sh \"Sinatra reprise\"",
@@ -80,12 +75,15 @@
         "9a41dcd0": "bin/play_cd.sh \"who can you trust\"",
         "4f1eb660": "bin/play_cd.sh \"out of state plates\"",
         "4e0e5060": "bin/play_cd.sh \"departure\"",
-        "e5249397": "bin/play_cd.sh \"in the city of sleep\""
+        "e5249397": "bin/play_cd.sh \"in the city of sleep\"",
+
+        "4ef88840": "bin/mpc_load_radio.sh Italians"
     },
     "pipe": {
         "load_radio": "mpc clear ; mpc lsplaylists | mpc load ; mpc play",
         "stop": "mpc stop",
-        "play": "mpc play"
+        "play": "mpc play",
+        "time": "bin/say_time.sh"
     },
     "mouse": {
         "WHEEL_-1": "mpc volume -5",

@@ -3,7 +3,7 @@ Description=Majordomo Radio Service
 After=network.target
 
 [Service]
-ExecStart=/opt/majordomo/majordomo.sh --mouse --RFID
+ExecStart=/opt/majordomo/majordomo.sh
 ExecReload=/bin/kill -HUP $MAINPID
 KillMode=process
 Restart=always
