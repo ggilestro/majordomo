@@ -35,10 +35,10 @@ import optparse
 
 import shlex, subprocess
 from listeners import rfid, pipe, mouse
-
+from actors import majordomo_mpd
 
 class majordomo():
-    def __init__(self, use_rfid=True, use_mouse=True, use_pipe=True ):
+    def __init__(self, use_rfid=True, use_mouse=True, use_pipe=True, use_mpd="localhost:6600" ):
         """
         """
         self.queue = queue.Queue()
@@ -53,6 +53,9 @@ class majordomo():
             
         if use_pipe:
             pipe.pipe("/tmp/pipefile", queue=self.queue, actions=self.actions)
+
+        host, port = use_mpd.split(":")
+        self.mpc = majordomo_mpd.mpd_connection(host, port)
 
         self.loadActions()
             
@@ -93,31 +96,50 @@ class majordomo():
         """
         ct:         command_type    (e.g. mouse, rfid, pipe, etc)
         cmd:        command         (e.g. wheel_+1, 4f1eb730, play, etc)
-        action:     action          (e.g. mpc stop)
+        action:     action          (e.g. mpc stop or mpc volume +5)
         """
         self.actions[ct][command] = action
         
     def execute(self, ct, cmd):
         """
+        Available types of actions:
+        mpc       -> controls mpd through the python binding
+        majordomo -> internal commands
+        exec      -> send a command line output
         """
         if ct in self.actions:
             if cmd in self.actions[ct]:
-                
                 args = shlex.split(self.actions[ct][cmd])
-                p = subprocess.Popen(args)
-                logging.debug(self.actions[ct][cmd])
-                logging.debug(p.communicate())
+
+                if args[0] == "majordomo":
+                    try:
+                        getattr(self, args[1])(args[2])
+                    except:
+                        getattr(self, args[1])()
+                
+                if args[0] == "mpc":
+                    try:
+                        getattr(self.mpc, args[1])(args[2])
+                    except:
+                        getattr(self.mpc, args[1])()
+                
+                if args[0] == "exec":
+                    p = subprocess.Popen(args[1:])
+                    logging.debug(self.actions[ct][cmd])
+                    logging.debug(p.communicate())
         
     def quit(self):
         """
         """
         self.isListening = False
         
-if __name__ == '__main__':        
+if __name__ == '__main__':
     parser = optparse.OptionParser()
  
     parser.add_option("-M", "--mouse", dest="mouse", default=False, help="Use mouse as listener", action="store_true")
     parser.add_option("-R", "--RFID", dest="RFID", default=False, help="Use RFID as listener", action="store_true")
+    parser.add_option("--MPD", dest="mpd", default="localhost:6600", help="Define MPD host. default localhost:6600")
+
     parser.add_option("-D", "--debug", dest="debug", default=False, help="Shows all logging messages", action="store_true")
  
  
@@ -129,4 +151,4 @@ if __name__ == '__main__':
         logging.debug("Logger in DEBUG mode")
         
     
-    m = majordomo(option_dict["RFID"], option_dict["mouse"])
+    m = majordomo(use_rfid = option_dict["RFID"], use_mouse = option_dict["mouse"], use_pipe = True, use_mpd = option_dict["mpd"])
